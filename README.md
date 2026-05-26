@@ -4,4 +4,6 @@
 
 This is the official repo for the paper "OptiMer: Optimal Distribution Vector Merging for Continued Pre-Training".
 
-**We are working very hard on the code and model release right now in NICT! Please be patient for a while🙏** 
+The code and model will be upload here upon acceptance.
+
+We are working very hard on the code and model release right now in NICT! Please be patient for a while🙏
