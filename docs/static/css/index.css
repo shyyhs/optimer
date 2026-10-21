@@ -1,0 +1,375 @@
+body {
+  font-family: 'Noto Sans', sans-serif;
+}
+
+
+.footer .icon-link {
+    font-size: 25px;
+    color: #000;
+}
+
+.link-block a {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.dnerf {
+  font-variant: small-caps;
+}
+
+
+.teaser .hero-body {
+  padding-top: 0;
+  padding-bottom: 3rem;
+}
+
+.teaser {
+  font-family: 'Google Sans', sans-serif;
+}
+
+
+.publication-title {
+}
+
+.publication-banner {
+  max-height: parent;
+
+}
+
+.publication-banner video {
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
+  object-fit: fit;
+}
+
+.publication-header .hero-body {
+}
+
+.publication-title {
+    font-family: 'Google Sans', sans-serif;
+}
+
+.publication-authors {
+    font-family: 'Google Sans', sans-serif;
+}
+
+.publication-venue {
+    color: #555;
+    width: fit-content;
+    font-weight: bold;
+}
+
+.publication-awards {
+    color: #ff3860;
+    width: fit-content;
+    font-weight: bolder;
+}
+
+.publication-authors {
+}
+
+.publication-authors a {
+   color: hsl(204, 86%, 53%) !important;
+}
+
+.publication-authors a:hover {
+    text-decoration: underline;
+}
+
+.author-block {
+  display: inline-block;
+}
+
+.publication-banner img {
+}
+
+.publication-authors {
+  /*color: #4286f4;*/
+}
+
+.publication-video {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%;
+
+    overflow: hidden;
+    border-radius: 10px !important;
+}
+
+.publication-video iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.publication-body img {
+}
+
+.results-carousel {
+  overflow: hidden;
+}
+
+.results-carousel .item {
+  margin: 5px;
+  overflow: hidden;
+  border: 1px solid #bbb;
+  border-radius: 10px;
+  padding: 0;
+  font-size: 0;
+}
+
+.results-carousel video {
+  margin: 0;
+}
+
+
+.interpolation-panel {
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.interpolation-panel .interpolation-image {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.interpolation-video-column {
+}
+
+.interpolation-panel .slider {
+  margin: 0 !important;
+}
+
+.interpolation-panel .slider {
+  margin: 0 !important;
+}
+
+#interpolation-image-wrapper {
+  width: 100%;
+}
+#interpolation-image-wrapper img {
+  border-radius: 5px;
+}
+
+.publication-venue-line {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.teaser-img {
+  width: 100%;
+  border-radius: 6px;
+  display: block;
+}
+
+.paper-figure {
+  margin: 0 0 2.5rem 0;
+}
+
+.paper-figure img {
+  width: 100%;
+  display: block;
+}
+
+.paper-figure figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: #4a4a4a;
+  text-align: justify;
+}
+
+.hl-orange { color: #FD7758; }
+.hl-en   { background: #DAEAF6; padding: 0 0.2em; }
+.hl-math { background: #FFF2CC; padding: 0 0.2em; }
+.hl-ja   { background: #D9EAD3; padding: 0 0.2em; }
+.hl-zh   { background: #F4CCCC; padding: 0 0.2em; }
+
+/* Citation card, after rome.baulab.info (Bootstrap 4 .card look). */
+.cite-card {
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem;
+  background: #fff;
+}
+
+.cite-card-header {
+  background: #f7f7f9;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  padding: 0.75rem 1.25rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #2B2B2B;
+  margin: 0;
+}
+
+.cite-card-block {
+  padding: 1.25rem;
+}
+
+.cite-card-block + .cite-card-header {
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.bib-entry {
+  margin: 0 0 0 3em;
+  text-indent: -3em;
+  color: #2B2B2B;
+}
+
+.bib-code {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: none;
+  color: #2B2B2B;
+  padding: 0;
+  margin: 0;
+}
+
+.thumb-links {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.75rem;
+}
+
+.thumb-link {
+  display: inline-block;
+  width: 200px;
+  text-align: center;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 1.15rem;
+  line-height: 1.35;
+  color: #123692;
+}
+
+.thumb-link img {
+  height: 150px;
+  width: auto;
+  display: block;
+  margin: 0 auto 0.6rem;
+  border: 1px solid #363636;
+}
+
+.thumb-link:hover {
+  text-decoration: underline;
+}
+
+/* Title band: near-neutral light gray, dark text (tsutawarudesign: white/near-white bg, no saturated fills). */
+.hero-band {
+  background: #fff;
+  padding-top: 1.5rem;
+}
+
+/* Title block as a floating card: no fill, soft shadow. */
+.hero-band .container {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06), 0 10px 28px rgba(0, 0, 0, 0.12);
+  padding: 1.5rem 1.25rem 1.75rem;
+}
+
+@media (min-width: 1024px) {
+  .hero-band .publication-title {
+    font-size: 2.25rem;
+  }
+}
+
+.hero-band .publication-title {
+  color: #2B2B2B;
+  font-weight: 700;
+}
+
+.hero-band .publication-authors {
+  color: #3A3A3A;
+}
+
+.hero-band .publication-authors a {
+  color: #123692 !important;
+}
+
+.hero-band .publication-venue {
+  color: #3A3A3A;
+}
+
+.links-section {
+  padding-top: 2rem;
+  padding-bottom: 1rem;
+}
+
+.links-section .thumb-links {
+  margin-top: 0;
+}
+
+/* Sub-headings: regular weight so only the section titles read as bold. */
+.title.sub-lead {
+  margin-bottom: 0.5rem !important;
+  color: #2B2B2B;
+  font-weight: 400;
+}
+
+.figure-lead {
+  font-size: 1.05rem;
+  color: #2B2B2B;
+  margin-bottom: 1rem;
+}
+
+/* Footer: a rule across the page, then name left and social icons right (icon row like the homepage). */
+.site-footer {
+  padding: 0 1.5rem 3rem;
+}
+
+.footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #dbdbdb;
+  padding-top: 1.25rem;
+  margin-top: 1rem;
+  font-family: 'Google Sans', sans-serif;
+  color: #2B2B2B;
+}
+
+.footer-name a {
+  color: #2B2B2B;
+}
+
+.footer-name a:hover {
+  color: #123692;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 1.3rem;
+}
+
+.footer-links a {
+  display: inline-flex;
+  color: #2B2B2B;
+}
+
+.footer-links a:hover {
+  color: #123692;
+}
+
+.footer-links svg {
+  height: 22px;
+  width: auto;
+  fill: currentColor;
+}
+
+/* Text beside a figure: tighten the figure's bottom margin so the pair centres cleanly. */
+.side-by-side .paper-figure {
+  margin-bottom: 0.5rem;
+}
+
+.side-by-side .figure-lead {
+  margin-bottom: 0;
+}

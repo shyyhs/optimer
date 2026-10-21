@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="OptiMer decouples data mixture ratio selection from continual pre-training: train one model per dataset, then merge their distribution vectors with weights found post-hoc by Bayesian optimization.">
+  <meta name="keywords" content="OptiMer, continual pre-training, model merging, distribution vector, data mixture, Bayesian optimization, EMNLP 2026">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta property="og:title" content="OptiMer: Optimal Distribution Vector Merging Is Better than Data Mixing for Continual Pre-Training">
+  <meta property="og:description" content="EMNLP 2026 (Oral). Train one model per dataset, then merge their distribution vectors with weights found post-hoc by Bayesian optimization.">
+  <meta property="og:image" content="https://shyyhs.github.io/optimer/static/images/cover_poster.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>OptiMer: Optimal Distribution Vector Merging Is Better than Data Mixing for Continual Pre-Training</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/index.css?v=4">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+</head>
+<body>
+
+<section class="hero hero-band">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-2 publication-title">
+            OptiMer: Optimal Distribution Vector Merging<br>
+            Is Better than Data Mixing for Continual Pre-Training
+          </h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://shyyhs.github.io/">Haiyue Song</a>,</span>
+            <span class="author-block">
+              <a href="https://aclanthology.org/people/huy-hien-vu/">Huy Hien Vu</a>,</span>
+            <span class="author-block">
+              <a href="https://researchmap.jp/mutiyama?lang=en">Masao Utiyama</a>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">National Institute of Information and Communications Technology (NICT), Kyoto, Japan</span>
+          </div>
+
+          <div class="is-size-5 publication-venue-line">
+            <span class="publication-venue">EMNLP 2026&emsp;Oral</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section links-section">
+  <div class="container is-max-desktop">
+    <div class="thumb-links">
+      <a class="thumb-link" href="https://arxiv.org/abs/2603.28858">
+        <img src="./static/images/thumb_paper.png" alt="arXiv preprint thumbnail">
+        <span>arXiv</span>
+      </a>
+      <a class="thumb-link" href="https://github.com/nict-astrec-att/optimer">
+        <img src="./static/images/thumb_code.png?v=2" alt="Source code thumbnail">
+        <span>Code</span>
+      </a>
+      <a class="thumb-link" href="https://shyyhs.github.io/files/EMNLP2026_OptiMer_slides.pdf">
+        <img src="./static/images/thumb_slides.png" alt="Slides thumbnail">
+        <span>Slides</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video class="teaser-img" autoplay muted loop playsinline preload="auto" poster="./static/images/cover_poster.jpg" aria-label="OptiMer cover animation">
+        <source src="./static/videos/cover.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns">
+      <div class="column">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content">
+          <p>
+            Continual pre-training is widely used to adapt LLMs to target languages and domains, yet
+            the mixture ratio of training data remains a sensitive hyperparameter that is expensive to
+            tune: it must be fixed <em>before</em> training begins, and a suboptimal choice can waste
+            weeks of compute.
+          </p>
+          <p>
+            In this work, we propose OptiMer, which decouples ratio selection from training: we train
+            one CPT model per dataset, extract each model's distribution vector, which represents the
+            parameter shift induced by that dataset, and search for optimal composition weights
+            <em>post-hoc</em> via Bayesian optimization. Experiments on Gemma 3 27B across languages
+            (Japanese, Chinese) and domains (Math, Code) show that OptiMer consistently outperforms
+            data mixture and model averaging baselines with 15&ndash;35&times; lower search cost.
+          </p>
+          <p>
+            Key findings reveal that 1) the optimized weights can be interpreted as data mixture
+            ratios, and retraining with these ratios improves data mixture CPT, and 2) the same vector
+            pool can be re-optimized for a given objective without any retraining, producing
+            target-tailored models on demand. Our work establishes that data mixture ratio selection,
+            traditionally a pre-training decision, can be reformulated as a post-hoc optimization over
+            distribution vectors, offering a more flexible paradigm for continual pre-training.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <!-- Method. -->
+    <h2 class="title is-3">Method</h2>
+    <div class="columns side-by-side">
+      <div class="column is-5">
+        <p class="figure-lead">
+          Instead of fixing the data mixture ratio <em>before training</em>, we train a separate continual
+          pre-training model on each dataset independently and extract the corresponding
+          <strong>distribution vector</strong> (the parameter shift from the base pre-trained model)
+          <em>after training</em>.
+        </p>
+      </div>
+      <div class="column is-7">
+        <figure class="paper-figure">
+          <img src="./static/images/fig1_motivation.svg" alt="Data Mix vs. OptiMer">
+        </figure>
+      </div>
+    </div>
+    <!--/ Method. -->
+
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <!-- Results. -->
+    <h2 class="title is-3">Results</h2>
+    <div class="columns side-by-side">
+      <div class="column is-5">
+        <h3 class="title is-5 sub-lead">OptiMer is Efficient</h3>
+        <p class="figure-lead">
+          OptiMer is 15&ndash;35&times; faster than data mixing for searching optimal ratios, and this
+          advantage becomes larger with more datasets.
+        </p>
+      </div>
+      <div class="column is-7">
+        <figure class="paper-figure">
+          <img src="./static/images/fig_efficiency.svg" alt="Computational cost">
+        </figure>
+      </div>
+    </div>
+    <h3 class="title is-5 sub-lead">OptiMer is Effective</h3>
+    <p class="figure-lead">
+      OptiMer achieves the highest average score across all dataset combinations, outperforming the
+      data mixing baseline in each group by 2.1&ndash;6.7 points.
+    </p>
+    <figure class="paper-figure">
+      <img src="./static/images/table_main_results.svg" alt="Main results">
+    </figure>
+
+    <h3 class="title is-5 sub-lead">OptiMer is Flexible</h3>
+    <p class="figure-lead">
+      OptiMer can produce an objective-optimized model on demand without retraining.
+    </p>
+    <figure class="paper-figure">
+      <img src="./static/images/table_reoptimize.svg" alt="Flexibility of OptiMer">
+    </figure>
+
+    <!--/ Results. -->
+
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <!-- Analysis. -->
+    <h2 class="title is-3">Analysis</h2>
+    <div class="columns">
+      <div class="column">
+        <h3 class="title is-5 sub-lead">Why Mergeable?</h3>
+        <p class="figure-lead">
+          Continual pre-training and instruction-tuned vectors are nearly orthogonal
+          (cosine &asymp; 0.03), and different continual pre-training vectors also exhibited low
+          similarity (0.29&ndash;0.31), indicating that each distribution modifies an independent
+          subspace, which supports the feasibility of linear composition.
+        </p>
+        <figure class="paper-figure">
+          <img src="./static/images/fig_heatmap.svg" alt="Pairwise cosine similarity and norm">
+        </figure>
+      </div>
+      <div class="column">
+        <h3 class="title is-5 sub-lead">Principal Component Analysis of<br>Distribution Vectors</h3>
+        <p class="figure-lead">
+          Principal component analysis of the same vectors (sparsified through layer-wise truncated
+          singular value decomposition); the accompanying bar charts show the optimal merge weights.
+          Both confirm that continual pre-training vectors lie far from the instruction-tuned vector.
+        </p>
+        <figure class="paper-figure">
+          <img src="./static/images/fig_pca.svg" alt="PCA projection of distribution vectors">
+        </figure>
+      </div>
+    </div>
+    <h3 class="title is-5 sub-lead">OptiMer Search Dynamics</h3>
+    <p class="figure-lead">
+      Weight combinations with high scores are concentrated in a narrow region with a large
+      instruction-tuned weight and small continual pre-training weights; this sharp optimum makes grid
+      search impractical, whereas the Tree-structured Parzen Estimator quickly approaches the
+      promising region and focuses exploration within it, and OptiMer converges within 100 trials.
+    </p>
+    <div class="columns">
+      <div class="column">
+        <figure class="paper-figure">
+          <img src="./static/images/fig_search_3d.svg" alt="Exploration of the merge weight space">
+        </figure>
+      </div>
+      <div class="column">
+        <figure class="paper-figure">
+          <img src="./static/images/fig_search_curve.svg" alt="Optimization progress">
+        </figure>
+      </div>
+    </div>
+
+    <div class="columns side-by-side">
+      <div class="column is-5">
+        <h3 class="title is-5 sub-lead">Continual Pre-Training Dynamics</h3>
+        <p class="figure-lead">
+          The continual pre-training trajectory is approximately linear, indicating that adjusting the
+          merge weight is analogous to controlling the effective training duration, which also explains
+          why OptiMer assigns small continual pre-training weights.
+        </p>
+      </div>
+      <div class="column is-7">
+        <figure class="paper-figure">
+          <img src="./static/images/fig_cpt_dynamics.svg" alt="Distribution vector trajectories during continual pre-training">
+        </figure>
+      </div>
+    </div>
+    <!--/ Analysis. -->
+
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Application</h2>
+    <h3 class="title is-5 sub-lead">Generalization to the SEA-LION Model</h3>
+    <p class="figure-lead">
+      We apply OptiMer to the Gemma-SEA-LION-v4-27B model, a Gemma 3 based model pre-trained on
+      Southeast Asian languages: it improves the Japanese leaderboard score from 66.34 to 74.40 and
+      the overall average from 54.37 to 70.19 over the base SEA-LION-v4-27B-IT, while maintaining the
+      ASEAN language task performance.
+    </p>
+    <figure class="paper-figure">
+      <img src="./static/images/table_sealion.svg" alt="Results on Gemma-SEA-LION-v4-27B">
+    </figure>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns">
+      <div class="column">
+        <h2 class="title is-3">Conclusion</h2>
+        <div class="content">
+          <p>
+            In this paper, we present OptiMer, a framework that decouples data mixture ratio selection
+            from model training in continual pre-training. OptiMer trains separate continual pre-training models per
+            dataset and composes their distribution vectors with weights optimized via Bayesian
+            optimization. Experimental results show OptiMer consistently outperforms data mixture
+            baselines while requiring 15&ndash;35&times; lower search time. We further demonstrate
+            OptiMer's flexibility to produce multiple objective-tailored models from a single vector
+            pool without retraining.
+          </p>
+          <p>
+            Our work suggests that data mixture ratio selection in continual pre-training can be reformulated as a
+            post-hoc optimization problem instead of being fixed before training. Future work includes
+            extending OptiMer to the mid-training, where deciding the mixture ratio of a large number
+            of domain-specific datasets remains a central challenge.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="cite">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">How to Cite</h2>
+    <p class="figure-lead">
+      We will update the citation after the EMNLP 2026 proceedings are public.
+    </p>
+    <div class="cite-card">
+      <h3 class="cite-card-header">bibliography</h3>
+      <div class="cite-card-block">
+        <p class="bib-entry clickselect">
+          Haiyue Song and Masao Utiyama. &ldquo;<em>OptiMer: Optimal Distribution Vector Merging Is
+          Better than Data Mixing for Continual Pre-Training.</em>&rdquo; arXiv preprint
+          arXiv:2603.28858 (2026).
+        </p>
+      </div>
+      <h3 class="cite-card-header">bibtex</h3>
+      <div class="cite-card-block">
+        <pre class="bib-code clickselect"><code>@misc{2603.28858,
+  Author = {Haiyue Song and Masao Utiyama},
+  Title = {OptiMer: Optimal Distribution Vector Merging Is Better than Data Mixing for Continual Pre-Training},
+  Year = {2026},
+  Eprint = {arXiv:2603.28858},
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container is-max-desktop">
+    <div class="footer-row">
+      <div class="footer-name">&copy; 2026 <a href="https://shyyhs.github.io/">Haiyue Song</a></div>
+      <nav class="footer-links" aria-label="social links">
+        <a href="https://scholar.google.com/citations?user=IP5UyqcAAAAJ&amp;sortby=pubdate" aria-label="Google Scholar" title="Google Scholar">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.242 13.769L0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/></svg>
+        </a>
+        <a href="https://www.alphaxiv.org/@haiyue-song" aria-label="alphaXiv" title="alphaXiv">
+          <svg viewBox="0 0 718.41 504.47" aria-hidden="true"><polygon points="591.15 258.54 718.41 385.73 663.72 440.28 536.57 313.62 591.15 258.54"/><path d="M273.86.3c34.56-2.41,67.66,9.73,92.51,33.54l94.64,94.63-55.11,54.55-96.76-96.55c-16.02-12.7-37.67-12.1-53.19,1.11L54.62,288.82,0,234.23,204.76,29.57C223.12,13.31,249.27,2.02,273.86.3Z"/><path d="M663.79,1.29l54.62,54.58-418.11,417.9c-114.43,95.94-263.57-53.49-167.05-167.52l160.46-160.33,54.62,54.58-157.88,157.77c-33.17,40.32,18.93,91.41,58.66,57.48L663.79,1.29Z"/></svg>
+        </a>
+        <a href="https://github.com/shyyhs" aria-label="GitHub" title="GitHub">
+          <svg viewBox="0 0 496 512" aria-hidden="true"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/haiyue-song-844a74186/" aria-label="LinkedIn" title="LinkedIn">
+          <svg viewBox="0 0 448 512" aria-hidden="true"><path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></svg>
+        </a>
+        <a href="https://x.com/shyoyhs" aria-label="X (Twitter)" title="X (Twitter)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></svg>
+        </a>
+        <a href="mailto:haiyue.song.nlp@gmail.com" aria-label="Email" title="Email">
+          <svg viewBox="0 0 512 512" aria-hidden="true"><path d="M464 64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zm0 48v40.805c-22.422 18.259-58.168 46.651-134.587 106.49-16.841 13.247-50.201 45.072-73.413 44.701-23.208.375-56.579-31.459-73.413-44.701C106.18 199.465 70.425 171.067 48 152.805V112h416zM48 400V214.398c22.914 18.251 55.409 43.862 104.938 82.646 21.857 17.205 60.134 55.186 103.062 54.955 42.717.231 80.509-37.199 103.053-54.947 49.528-38.783 82.032-64.401 104.947-82.653V400H48z"/></svg>
+        </a>
+        <a href="https://shyyhs.github.io/" aria-label="Homepage" title="Homepage">
+          <svg viewBox="0 0 576 512" aria-hidden="true"><path d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"/></svg>
+        </a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<!-- Page layout adapted from the Nerfies website template (https://nerfies.github.io/), CC BY-SA 4.0. -->
+<script>
+  document.addEventListener('click', function (ev) {
+    var el = ev.target.closest('.clickselect');
+    if (!el) return;
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  });
+</script>
+</body>
+</html>
