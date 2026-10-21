@@ -164,8 +164,9 @@ body {
 
 .teaser-img {
   width: 100%;
-  border-radius: 6px;
+  border-radius: 10px;
   display: block;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06), 0 10px 28px rgba(0, 0, 0, 0.12);
 }
 
 .paper-figure {
