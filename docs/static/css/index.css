@@ -299,6 +299,11 @@ body {
   color: #3A3A3A;
 }
 
+/* Award text in the venue line: EMNLP 2026 certificate red. */
+.hero-band .publication-award {
+  color: #c8102e;
+}
+
 .links-section {
   padding-top: 2rem;
   padding-bottom: 1rem;
